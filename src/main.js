@@ -18,6 +18,7 @@ axios.defaults.baseURL = 'http://localhost:8888/card'
 // axios
 Vue.prototype.$http = axios
 Vue.config.productionTip = false
+
 new Vue({
     router,
     render: h => h(App)
