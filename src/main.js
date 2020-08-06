@@ -1,7 +1,21 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
-import {Button, Form, FormItem, Input, Message} from 'element-ui';
+import {
+    Aside,
+    Button,
+    Container,
+    Form,
+    FormItem,
+    Header,
+    Input,
+    Main,
+    Menu,
+    MenuItem,
+    MenuItemGroup,
+    Message,
+    Submenu
+} from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 // 导入全局样式表
 import './assets/css/global.css'
@@ -11,6 +25,14 @@ Vue.use(Button);
 Vue.use(Form);
 Vue.use(FormItem);
 Vue.use(Input);
+Vue.use(Container);
+Vue.use(Header);
+Vue.use(Aside);
+Vue.use(Main);
+Vue.use(Menu);
+Vue.use(Submenu);
+Vue.use(MenuItemGroup);
+Vue.use(MenuItem);
 // 导入弹框提示组件
 Vue.prototype.$message = Message
 // 配置请求的根路径
