@@ -11,27 +11,31 @@
         <!--主题区域-->
         <el-container>
             <!--侧边栏-->
-            <el-aside width="200px">
+            <el-aside :width="isCollapse?'64px':'200px'">
+                <div class="toggle-button" @click="toggleCollapse">|||</div>
                 <el-menu
                         background-color="#333744"
                         text-color="#fff"
-                        active-text-color="#ffd04b">
+                        active-text-color="#409EFF" :unique-opened="true" :collapse="isCollapse"
+                        :collapse-transition="false" :router="true" :default-active="activePath">
                     <!--一级菜单-->
-                    <el-submenu index="1">
+                    <el-submenu :index="item.id.toString()" v-for="item in menuList" :key="item.id">
                         <!--一级菜单模板区域-->
                         <template slot="title">
                             <!--图标-->
-                            <i class="el-icon-location"></i>
+                            <i :class="iconObj[item.id-1]"></i>
                             <!--文本-->
-                            <span>导航一</span>
+                            <span>{{item.name}}</span>
                         </template>
                         <!--二级菜单-->
-                        <el-menu-item index="1-4-1">
+                        <el-menu-item :index="'/'+menuListBCommand.path"
+                                      v-for="menuListBCommand in item.menuListBCommands" :key="menuListBCommand.id"
+                                      @click="saveNavState('/'+menuListBCommand.path)">
                             <template slot="title">
                                 <!--图标-->
-                                <i class="el-icon-location"></i>
+                                <i class="el-icon-menu"></i>
                                 <!--文本-->
-                                <span>导航一</span>
+                                <span>{{menuListBCommand.name}}</span>
                             </template>
                         </el-menu-item>
                     </el-submenu>
@@ -39,7 +43,9 @@
             </el-aside>
             <el-container>
                 <!--右侧主题内容-->
-                <el-main>Main</el-main>
+                <el-main>
+                    <router-view></router-view>
+                </el-main>
             </el-container>
         </el-container>
     </el-container>
@@ -47,10 +53,41 @@
 
 <script>
     export default {
+        data() {
+            return {
+                menuList: [],
+                iconObj: {
+                    '0': 'el-icon-s-home',
+                    '1': 'el-icon-user-solid',
+                    '2': 'el-icon-star-on',
+                    '3': 'el-icon-s-goods',
+                    '4': 'el-icon-s-comment',
+                    '5': 'el-icon-s-order',
+                    '6': 'el-icon-s-tools',
+                },
+                isCollapse: false,
+                activePath: ''
+            }
+        },
+        async created() {
+            let {data: res} = await this.$http.post('/menuList/findAll');
+            if (res.code !== 1) {
+                this.$message.error(res.data)
+            } else {
+                this.menuList = res.data
+            }
+            this.activePath = window.sessionStorage.getItem('activePath')
+        },
         methods: {
             logout: function () {
                 window.sessionStorage.clear()
                 this.$router.push('/login')
+            },
+            toggleCollapse: function () {
+                this.isCollapse = !this.isCollapse
+            },
+            saveNavState: function (activePath) {
+                window.sessionStorage.setItem('activePath', activePath)
             }
         }
     }
@@ -82,9 +119,27 @@
 
     .el-aside {
         background-color: #333744;
+
+        .el-menu {
+            border-right: none;
+        }
     }
 
     .el-main {
         background-color: #EAEDF1;
+    }
+
+    .iconfont {
+        margin-right: 10px;
+    }
+
+    .toggle-button {
+        background-color: #4A5064;
+        font-size: 10px;
+        line-height: 24px;
+        color: #fff;
+        text-align: center;
+        letter-spacing: 0.2em;
+        cursor: pointer;
     }
 </style>

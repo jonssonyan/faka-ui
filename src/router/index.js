@@ -2,6 +2,12 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../components/Login.vue'
 import Home from '../components/Home.vue'
+import UserList from '../components/user/UserList.vue'
+import CategoryList from '../components/category/CategoryList.vue'
+import ProductList from '../components/product/ProductList.vue'
+import CardList from '../components/card/CardList.vue'
+import OrderList from '../components/order/OrderList.vue'
+import Alipay from '../components/config/Alipay.vue'
 
 Vue.use(VueRouter)
 
@@ -16,7 +22,33 @@ const routes = [
     },
     {
         path: '/home',
-        component: Home
+        component: Home,
+        children: [
+            {
+                path: '/userList',
+                component: UserList
+            },
+            {
+                path: '/categoryList',
+                component: CategoryList
+            },
+            {
+                path: '/productList',
+                component: ProductList
+            },
+            {
+                path: '/CardList',
+                component: CardList
+            },
+            {
+                path: '/orderList',
+                component: OrderList
+            },
+            {
+                path: '/alipay',
+                component: Alipay
+            },
+        ]
     }
 ]
 
