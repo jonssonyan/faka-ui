@@ -18,7 +18,13 @@ import {
     MenuItem,
     Message,
     Row,
-    Submenu
+    Submenu,
+    Table,
+    TableColumn,
+    Switch,
+    Tooltip,
+    Pagination,
+    Dialog
 } from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 // 导入全局样式表
@@ -42,6 +48,12 @@ Vue.use(Card);
 Vue.use(Input);
 Vue.use(Col);
 Vue.use(Row);
+Vue.use(Table);
+Vue.use(TableColumn);
+Vue.use(Switch);
+Vue.use(Tooltip);
+Vue.use(Pagination);
+Vue.use(Dialog);
 // 导入弹框提示组件
 Vue.prototype.$message = Message
 // 配置请求的根路径
