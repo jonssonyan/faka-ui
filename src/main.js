@@ -24,7 +24,9 @@ import {
     Switch,
     Tooltip,
     Pagination,
-    Dialog
+    Dialog,
+    Select,
+    Option
 } from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 // 导入全局样式表
@@ -54,6 +56,8 @@ Vue.use(Switch);
 Vue.use(Tooltip);
 Vue.use(Pagination);
 Vue.use(Dialog);
+Vue.use(Select);
+Vue.use(Option);
 // 导入弹框提示组件
 Vue.prototype.$message = Message
 // 配置请求的根路径
@@ -61,7 +65,7 @@ axios.defaults.baseURL = 'http://localhost:8888/card'
 axios.interceptors.request.use((config) => {
     config.headers.token = window.sessionStorage.getItem('token')
     return config
-})
+});
 // axios
 Vue.prototype.$http = axios
 Vue.config.productionTip = false

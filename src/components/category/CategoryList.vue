@@ -60,7 +60,8 @@
         <el-dialog
                 title="添加分类"
                 :visible.sync="dialogVisible"
-                width="50%">
+                width="50%"
+                @close="addDialogClosed">
             <!--内容主体区域-->
             <el-form :model="addCategoryForm" :rules="addCategoryRules" ref="addCategoryRef" label-width="70px">
                 <el-form-item label="名称" prop="name">
@@ -70,12 +71,18 @@
                     <el-input v-model="addCategoryForm.parent"></el-input>
                 </el-form-item>
                 <el-form-item label="状态" prop="state">
-                    <el-input v-model="addCategoryForm.state"></el-input>
+                    <el-select v-model="addCategoryForm.state" placeholder="请选择">
+                        <el-option v-for="(item,index) in options"
+                                   :key="index"
+                                   :value="item.value"
+                                   :label="item.label">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
     <el-button @click="dialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+    <el-button type="primary" @click="addCategory">确 定</el-button>
   </span>
         </el-dialog>
     </div>
@@ -96,20 +103,26 @@
                 // 设置添加分类弹框的显示和隐藏
                 dialogVisible: false,
                 // 添加的分类对象
-                addCategoryForm: {},
+                addCategoryForm: {
+                    name: '',
+                    parent: null,
+                    state: true
+                },
                 // 添加分类的验证规则
                 addCategoryRules: {
                     name: [
                         {required: true, message: '请输入名称', trigger: 'blur'},
-                        {min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur'}
+                        {min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur'}
                     ],
-                    parent:[
-                        {required: true, message: '请输入父级', trigger: 'blur'},
-                    ],
+                    parent: [],
                     state: [
                         {required: true, message: '请输入状态', trigger: 'blur'}
                     ]
-                }
+                },
+                options: [
+                    {label: '上架', value: true},
+                    {label: '下架', value: false}
+                ]
             }
         },
         created() {
@@ -117,28 +130,48 @@
         },
         methods: {
             async getCategoryList() {
-                let {data: res} = await this.$http.post(`/admin/category/findByPage/${this.queryInfo.pageNum}/${this.queryInfo.pageSize}`, this.queryInfo)
-                if (res.code !== 1) return this.$message.error("获取分类列表失败！")
-                this.categoryList = res.data.records
+                let {data: res} = await this.$http.post(`/category/admin/findByPage/${this.queryInfo.pageNum}/${this.queryInfo.pageSize}`, this.queryInfo);
+                if (res.code !== 1) return this.$message.error("获取分类列表失败！");
+                this.categoryList = res.data.records;
                 this.total = res.data.total
             },
             // 监听pageSize改变的事件
             handleSizeChange(newSize) {
-                this.queryInfo.pageSize = newSize
+                this.queryInfo.pageSize = newSize;
                 this.getCategoryList()
             },
             // 监听pageNum改变的事件
             handleCurrentChange(newPage) {
-                this.queryInfo.pageNum = newPage
+                this.queryInfo.pageNum = newPage;
                 this.getCategoryList()
             },
             async stateChange(info) {
-                let {data: res} = await this.$http.post(`/admin/category/updateById/${info.id}`, info)
+                let {data: res} = await this.$http.post(`/category/admin/updateById/${info.id}`, info);
                 if (res.code !== 1) {
-                    info.state = !info.state
+                    info.state = !info.state;
                     return this.$message.error("更新状态失败")
                 }
                 this.$message.success("更新状态成功")
+            },
+            // 监听添加分类对话框的关闭事件
+            addDialogClosed() {
+                this.$refs.addCategoryRef.resetFields();
+            },
+            // 点击按钮添加新用户
+            addCategory() {
+                this.$refs.addCategoryRef.validate(async valid => {
+                    if (!valid) return;
+                    // 发起添加分类的网络请求
+                    const {data: res} = await this.$http.post('/category/admin/insert', this.addCategoryForm);
+                    if (res.code !== 1) {
+                        this.$message.error("添加分类失败")
+                    }
+                    this.$message.success("添加分类成功");
+                    // 隐藏添加分类对话框
+                    this.dialogVisible = false;
+                    // 重新获取分类列表
+                    this.getCategoryList();
+                })
             }
         }
     }

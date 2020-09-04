@@ -56,7 +56,7 @@ const router = new VueRouter({
     routes
 })
 
-// 路由控制守卫
+// 路由控制守卫,解决需要登录才可以访问的页面
 router.beforeEach((to, from, next) => {
     // 如果访问的首页直接放行
     if (to.path === '/login') return next()
