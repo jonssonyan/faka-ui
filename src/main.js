@@ -26,7 +26,8 @@ import {
     Pagination,
     Dialog,
     Select,
-    Option
+    Option,
+    MessageBox
 } from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 // 导入全局样式表
@@ -59,7 +60,7 @@ Vue.use(Dialog);
 Vue.use(Select);
 Vue.use(Option);
 // 导入弹框提示组件
-Vue.prototype.$message = Message
+Vue.prototype.$message = Message;
 // 配置请求的根路径
 axios.defaults.baseURL = 'http://localhost:8888/card'
 axios.interceptors.request.use((config) => {
@@ -67,10 +68,11 @@ axios.interceptors.request.use((config) => {
     return config
 });
 // axios
-Vue.prototype.$http = axios
-Vue.config.productionTip = false
-
+Vue.prototype.$http = axios;
+Vue.config.productionTip = false;
+// confirm
+Vue.prototype.$confirm = MessageBox.confirm;
 new Vue({
     router,
     render: h => h(App)
-}).$mount('#app')
+}).$mount('#app');
