@@ -64,6 +64,7 @@
                     '4': 'el-icon-s-comment',
                     '5': 'el-icon-s-order',
                     '6': 'el-icon-s-tools',
+                    '18': 'el-icon-collection-tag'
                 },
                 isCollapse: false,
                 activePath: ''

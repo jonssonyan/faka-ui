@@ -8,6 +8,8 @@ import ProductList from '../components/product/ProductList.vue'
 import CardList from '../components/card/CardList.vue'
 import OrderList from '../components/order/OrderList.vue'
 import Alipay from '../components/config/Alipay.vue'
+import RightsList from '../components/power/RightsList.vue'
+import RoleList from '../components/power/RoleList.vue'
 
 Vue.use(VueRouter);
 
@@ -37,7 +39,7 @@ const routes = [
                 component: ProductList
             },
             {
-                path: '/CardList',
+                path: '/cardList',
                 component: CardList
             },
             {
@@ -47,6 +49,14 @@ const routes = [
             {
                 path: '/alipay',
                 component: Alipay
+            },
+            {
+                path: '/rightsList',
+                component: RightsList
+            },
+            {
+                path: '/roleList',
+                component: RoleList
             },
         ]
     }
