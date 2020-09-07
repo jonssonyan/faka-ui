@@ -136,7 +136,6 @@
         data() {
             return {
                 queryInfo: {
-                    name: '',
                     pageNum: 1,
                     pageSize: 10
                 },
