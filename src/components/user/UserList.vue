@@ -50,7 +50,7 @@
                         <!--删除-->
                         <el-tooltip effect="dark" content="删除" placement="top" :enterable="false">
                             <el-button type="danger" icon="el-icon-delete" size="mini"
-                                       @click="removeCategoryById(scope.row.id)"></el-button>
+                                       @click="removeUserById(scope.row.id)"></el-button>
                         </el-tooltip>
                     </template>
                 </el-table-column>
@@ -199,8 +199,36 @@
                 this.editUserForm = res.data;
                 this.editDialogVisible = true;
             },
-            removeCategoryById(id) {
-                console.log(id);
+            async removeUserById(id) {
+                // 弹框询问用户是否删除分类
+                await this.$confirm('此操作将永久删除该分类, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(async () => {
+                    // 删除分类
+                    const command = {
+                        ids: []
+                    };
+                    command.ids[0] = id;
+                    console.log(command);
+                    const {data: res} = await this.$http.post(`/user/admin/deleteByIds`, command);
+                    if (res.code !== 1) {
+                        this.$message.error("删除用户失败");
+                    }
+                    this.$message.success("删除用户成功");
+                    // 重新获取分类列表
+                    this.getUserList();
+                    this.$message({
+                        type: 'success',
+                        message: '删除成功!'
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
             },
             handleSizeChange(newSize) {
                 this.queryInfo.pageSize = newSize;
@@ -225,7 +253,7 @@
                     // 隐藏添加分类对话框
                     this.addDialogVisible = false;
                     // 重新获取分类列表
-                    this.getAncestors();
+                    this.getUserList();
                 })
             },
             editUserInfo() {
