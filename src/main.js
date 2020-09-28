@@ -62,9 +62,9 @@ Vue.use(Option);
 // 导入弹框提示组件
 Vue.prototype.$message = Message;
 // 配置请求的根路径
-axios.defaults.baseURL = 'http://localhost:8888/card'
+axios.defaults.baseURL = 'http://localhost:8888/card';
 axios.interceptors.request.use((config) => {
-    config.headers.token = window.sessionStorage.getItem('token')
+    config.headers.token = window.sessionStorage.getItem('token');
     return config
 });
 // axios
