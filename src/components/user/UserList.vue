@@ -211,7 +211,6 @@
                         ids: []
                     };
                     command.ids[0] = id;
-                    console.log(command);
                     const {data: res} = await this.$http.post(`/user/admin/deleteByIds`, command);
                     if (res.code !== 1) {
                         this.$message.error("删除用户失败");
