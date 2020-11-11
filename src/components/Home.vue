@@ -67,14 +67,19 @@
                     '18': 'el-icon-collection-tag'
                 },
                 isCollapse: false,
-                activePath: ''
+                activePath: '',
+                menuListForm: {
+                    pageSize: 1,
+                    pageNum: -1
+                }
             }
         },
         async created() {
-            let {data: res} = await this.$http.post('/menuList/findAll');
+            let {data: res} = await this.$http.post('/menuList/token/selectPage', this.menuListForm);
             if (res.code !== 1) {
                 this.$message.error(res.data)
             } else {
+                console.log(res.data);
                 this.menuList = res.data
             }
             this.activePath = window.sessionStorage.getItem('activePath')
