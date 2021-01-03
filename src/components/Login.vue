@@ -58,7 +58,7 @@
             login() {
                 this.$refs.loginFormRef.validate(async valid => {
                     if (!valid) return;
-                    let {data: res} = await this.$http.post('user/login', this.loginForm);
+                    let {data: res} = await this.$http.post('/login', this.loginForm);
                     if (res.code !== 1) {
                         this.$message.error(res.data)
                     } else {

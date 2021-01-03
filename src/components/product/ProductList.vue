@@ -245,10 +245,8 @@
                 if (res1.code !== 1) {
                     this.$message.error("查询分类失败")
                 }
-
                 this.categoryFormExceptSelf = res1.data;
                 this.editProductForm = res.data;
-                console.log(this.editProductForm)
                 this.editDialogVisible = true;
             },
             // 展示添加产品的对话框

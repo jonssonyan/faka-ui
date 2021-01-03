@@ -28,14 +28,14 @@
                             <span>{{item.name}}</span>
                         </template>
                         <!--二级菜单-->
-                        <el-menu-item :index="'/'+menuListBCommand.path"
-                                      v-for="menuListBCommand in item.menuListBCommands" :key="menuListBCommand.id"
-                                      @click="saveNavState('/'+menuListBCommand.path)">
+                        <el-menu-item :index="'/'+menu.path"
+                                      v-for="menu in item.menuLists" :key="menu.id"
+                                      @click="saveNavState('/'+menu.path)">
                             <template slot="title">
                                 <!--图标-->
                                 <i class="el-icon-menu"></i>
                                 <!--文本-->
-                                <span>{{menuListBCommand.name}}</span>
+                                <span>{{menu.name}}</span>
                             </template>
                         </el-menu-item>
                     </el-submenu>
@@ -75,18 +75,18 @@
             }
         },
         async created() {
-            let {data: res} = await this.$http.post('/menuList/token/selectPage', this.menuListForm);
+            let {data: res} = await this.$http.post('/api/menuList/selectList', this.menuListForm);
             if (res.code !== 1) {
                 this.$message.error(res.data)
             } else {
-                console.log(res.data);
                 this.menuList = res.data
             }
+            // 记录上一次激活的菜单
             this.activePath = window.sessionStorage.getItem('activePath')
         },
         methods: {
             logout: function () {
-                window.sessionStorage.clear()
+                window.sessionStorage.clear();
                 this.$router.push('/login')
             },
             toggleCollapse: function () {

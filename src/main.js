@@ -9,6 +9,7 @@ import {
     Card,
     Col,
     Container,
+    Dialog,
     Form,
     FormItem,
     Header,
@@ -17,17 +18,16 @@ import {
     Menu,
     MenuItem,
     Message,
+    MessageBox,
+    Option,
+    Pagination,
     Row,
+    Select,
     Submenu,
+    Switch,
     Table,
     TableColumn,
-    Switch,
-    Tooltip,
-    Pagination,
-    Dialog,
-    Select,
-    Option,
-    MessageBox
+    Tooltip
 } from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 // 导入全局样式表
@@ -61,6 +61,8 @@ Vue.use(Select);
 Vue.use(Option);
 // 导入弹框提示组件
 Vue.prototype.$message = Message;
+// confirm
+Vue.prototype.$confirm = MessageBox.confirm;
 // 配置请求的根路径
 axios.defaults.baseURL = 'http://localhost:8888/card';
 axios.interceptors.request.use((config) => {
@@ -70,8 +72,6 @@ axios.interceptors.request.use((config) => {
 // axios
 Vue.prototype.$http = axios;
 Vue.config.productionTip = false;
-// confirm
-Vue.prototype.$confirm = MessageBox.confirm;
 new Vue({
     router,
     render: h => h(App)
