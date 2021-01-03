@@ -77,7 +77,7 @@
         async created() {
             let {data: res} = await this.$http.post('/api/menuList/selectList', this.menuListForm);
             if (res.code !== 1) {
-                this.$message.error(res.data)
+                this.$message.error(res.msg)
             } else {
                 this.menuList = res.data
             }

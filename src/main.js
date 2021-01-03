@@ -64,7 +64,6 @@ Vue.use(Option);
 axios.defaults.baseURL = 'http://localhost:8888/card';
 axios.interceptors.request.use((config) => {
     config.headers.token = window.sessionStorage.getItem('token');
-    console.log(config.headers.token);
     return config
 });
 // 导入弹框提示组件

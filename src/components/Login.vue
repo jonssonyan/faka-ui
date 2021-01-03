@@ -60,7 +60,7 @@
                     if (!valid) return;
                     let {data: res} = await this.$http.post('/login', this.loginForm);
                     if (res.code !== 1) {
-                        this.$message.error(res.data)
+                        this.$message.error(res.msg)
                     } else {
                         this.$message.success('登录成功');
                         window.sessionStorage.setItem('token', res.data.token);
