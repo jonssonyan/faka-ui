@@ -62,8 +62,8 @@
                     if (res.code !== 1) {
                         this.$message.error(res.data)
                     } else {
-                        this.$message.success('登录成功')
-                        window.sessionStorage.setItem('token', res.data.token)
+                        this.$message.success('登录成功');
+                        window.sessionStorage.setItem('token', res.data.token);
                         await this.$router.push('/home')
                     }
                 })
