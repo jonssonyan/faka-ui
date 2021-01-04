@@ -64,13 +64,13 @@ Vue.use(Option);
 axios.defaults.baseURL = 'http://localhost:8888/card';
 axios.interceptors.request.use((config) => {
     config.headers.Authorization = window.sessionStorage.getItem('Authorization');
-    console.log(config.headers.Authorization);
     return config
 });
 // 导入弹框提示组件
 Vue.prototype.$message = Message;
 // confirm
 Vue.prototype.$confirm = MessageBox.confirm;
+// axios
 Vue.prototype.$http = axios;
 Vue.config.productionTip = false;
 new Vue({
