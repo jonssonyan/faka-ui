@@ -59,20 +59,30 @@ Vue.use(Pagination);
 Vue.use(Dialog);
 Vue.use(Select);
 Vue.use(Option);
-
-// 配置请求的根路径
-axios.defaults.baseURL = 'http://localhost:8888/card';
+Vue.config.productionTip = false;
 axios.interceptors.request.use((config) => {
     config.headers.Authorization = window.sessionStorage.getItem('Authorization');
     return config
 });
+// 配置请求的根路径
+axios.defaults.baseURL = 'http://localhost:8888/card';
+// axios
+Vue.prototype.$http = axios;
 // 导入弹框提示组件
 Vue.prototype.$message = Message;
 // confirm
 Vue.prototype.$confirm = MessageBox.confirm;
-// axios
-Vue.prototype.$http = axios;
-Vue.config.productionTip = false;
+// 路由控制守卫,解决需要登录才可以访问的页面
+router.beforeEach((to, from, next) => {
+    // 如果访问的首页直接放行
+    if (to.path === '/login') return next();
+    // 获取token
+    const tokenStr = window.sessionStorage.getItem('Authorization');
+    // 没有token放回登录界面
+    if (!tokenStr) return next('/login');
+    // 有token放行
+    return next()
+});
 new Vue({
     router,
     render: h => h(App)
