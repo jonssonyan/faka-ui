@@ -63,7 +63,7 @@
                         this.$message.error(res.msg)
                     } else {
                         this.$message.success('登录成功');
-                        window.sessionStorage.setItem('token', res.data.token);
+                        window.sessionStorage.setItem('Authorization', res.data.Authorization);
                         await this.$router.push('/home')
                     }
                 })

@@ -63,7 +63,8 @@ Vue.use(Option);
 // 配置请求的根路径
 axios.defaults.baseURL = 'http://localhost:8888/card';
 axios.interceptors.request.use((config) => {
-    config.headers.token = window.sessionStorage.getItem('token');
+    config.headers.Authorization = window.sessionStorage.getItem('Authorization');
+    console.log(config.headers.Authorization);
     return config
 });
 // 导入弹框提示组件
