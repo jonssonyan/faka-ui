@@ -10,6 +10,7 @@ import OrderList from '../components/order/OrderList.vue'
 import Alipay from '../components/config/Alipay.vue'
 import RightsList from '../components/power/RightsList.vue'
 import RoleList from '../components/power/RoleList.vue'
+import Register from "../components/Register";
 
 Vue.use(VueRouter);
 
@@ -21,6 +22,10 @@ const routes = [
     {
         path: '/login',
         component: Login
+    },
+    {
+        path: '/register',
+        component: Register
     },
     {
         path: '/home',
@@ -65,7 +70,5 @@ const routes = [
 const router = new VueRouter({
     routes
 });
-
-
 
 export default router
