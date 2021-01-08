@@ -11,6 +11,7 @@ import Alipay from '../components/config/Alipay.vue'
 import RightsList from '../components/power/RightsList.vue'
 import RoleList from '../components/power/RoleList.vue'
 import Register from "../components/Register";
+import axios from "axios";
 
 Vue.use(VueRouter);
 
@@ -70,5 +71,26 @@ const routes = [
 const router = new VueRouter({
     routes
 });
+
+// 路由控制守卫,解决需要登录才可以访问的页面
+router.beforeEach((to, from, next) => {
+    // 如果访问的首页直接放行
+    if (to.path === '/login' || to.path === '/register') return next();
+    // 获取token
+    const tokenStr = window.sessionStorage.getItem('Authorization');
+    // 没有token放回登录界面
+    if (!tokenStr) return next('/login');
+    // 有token放行
+    return next()
+});
+
+axios.interceptors.request.use((config) => {
+    config.headers.Authorization = window.sessionStorage.getItem('Authorization');
+    return config
+});
+
+// axios 配置
+axios.defaults.baseURL = 'http://localhost:8888/card';
+Vue.prototype.$http = axios;
 
 export default router

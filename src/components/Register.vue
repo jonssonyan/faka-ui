@@ -1,15 +1,15 @@
 <template>
     <el-form ref="registerRef" :model="registerForm" label-width="80px" :rules="registerRules">
         <el-form-item label="用户名" prop="username">
-            <el-input v-model="registerForm.username"></el-input>
+            <el-input v-model="registerForm.username" type="text"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="username">
-            <el-input v-model="registerForm.password"></el-input>
+        <el-form-item label="密码" prop="password">
+            <el-input v-model="registerForm.password" type="password"></el-input>
         </el-form-item>
         <el-form-item>
-            <el-button type="primary" @click="register()">注册</el-button>
-            <el-button @click="reset()">重设</el-button>
-            <el-button @click="toLogin()">取消</el-button>
+            <el-button type="primary" @click="register">注册</el-button>
+            <el-button @click="reset">重设</el-button>
+            <el-button @click="toLogin">取消</el-button>
         </el-form-item>
     </el-form>
 </template>
@@ -41,7 +41,7 @@
                         this.$message.error(res.msg)
                     } else {
                         this.$message.success('注册成功');
-                        await this.$router.push('/home')
+                        await this.$router.push('/login')
                     }
                 })
             },

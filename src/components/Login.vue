@@ -9,17 +9,17 @@
             <el-form ref="loginFormRef" label-width="0px" class="login_form" :model="loginForm" :rules="loginFormRules">
                 <!--用户名区域-->
                 <el-form-item prop="username">
-                    <el-input prefix-icon="el-icon-user" v-model="loginForm.username"></el-input>
+                    <el-input prefix-icon="el-icon-user" v-model="loginForm.username" type="text"></el-input>
                 </el-form-item>
                 <!--密码区域-->
                 <el-form-item prop="password">
                     <el-input prefix-icon="el-icon-lock" v-model="loginForm.password" type="password"
-                              @keyup.enter.native="login()"></el-input>
+                              @keyup.enter.native="login"></el-input>
                 </el-form-item>
                 <!--按钮区域-->
                 <el-form-item class="btns">
-                    <el-button type="primary" @click="login()">登录</el-button>
-                    <el-button type="primary" @click="register()">注册</el-button>
+                    <el-button type="primary" @click="login">登录</el-button>
+                    <el-button type="primary" @click="register">注册</el-button>
                     <el-button type="info" @click="resetLoginForm">重置</el-button>
                 </el-form-item>
             </el-form>
@@ -33,10 +33,7 @@
         data() {
             return {
                 // 登录表单的数据绑定对象
-                loginForm: {
-                    username: '',
-                    password: ''
-                },
+                loginForm: {},
                 // 表单的验证规则对象
                 loginFormRules: {
                     // 验证用户名是否合法
