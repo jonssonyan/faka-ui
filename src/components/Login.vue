@@ -33,7 +33,10 @@
         data() {
             return {
                 // 登录表单的数据绑定对象
-                loginForm: {},
+                loginForm: {
+                    username:"",
+                    password:""
+                },
                 // 表单的验证规则对象
                 loginFormRules: {
                     // 验证用户名是否合法

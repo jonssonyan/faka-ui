@@ -1,10 +1,22 @@
 <template>
     <el-form ref="registerRef" :model="registerForm" label-width="80px" :rules="registerRules">
         <el-form-item label="用户名" prop="username">
-            <el-input v-model="registerForm.username" type="text"></el-input>
+            <el-input v-model="registerForm.username" type=""></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="password">
+        <el-form-item label="密码" prop="password1">
+            <el-input v-model="registerForm.password1" type="password"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="password">
             <el-input v-model="registerForm.password" type="password"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+            <el-input v-model="registerForm.email" type="text"></el-input>
+        </el-form-item>
+        <el-form-item label="QQ" prop="qq">
+            <el-input v-model="registerForm.qq" type="text"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号码" prop="phone">
+            <el-input v-model="registerForm.phone" type="text"></el-input>
         </el-form-item>
         <el-form-item>
             <el-button type="primary" @click="register">注册</el-button>
@@ -18,16 +30,41 @@
     export default {
         name: 'Register',
         data() {
+            // 自定义校验规则
+            const validatePassword = (rule, value, callback) => {
+                if (this.registerForm.password1 !== this.registerForm.password) {
+                    callback(new Error("两次输入密码不一致!"));
+                } else {
+                    callback();
+                }
+            };
             return {
-                registerForm: {},
+                registerForm: {
+                    password1: "",
+                    password: "",
+                    username: "",
+                    email: "",
+                    qq: "",
+                    phone: ""
+                },
                 registerRules: {
                     username: [
                         {required: true, message: '请输入用户名', trigger: 'blur'},
                         {min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur'}
                     ],
+                    password1: [
+                        {required: true, message: '请输入密码', trigger: 'blur'},
+                        {min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur'},
+                        {validator: validatePassword, trigger: "blur"}
+                    ],
                     password: [
                         {required: true, message: '请输入密码', trigger: 'blur'},
-                        {min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur'}
+                        {min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur'},
+                        {validator: validatePassword, trigger: "blur"}
+                    ],
+                    email: [
+                        {required: true, message: '请输入邮箱', trigger: 'blur'},
+                        {type: 'email', message: '请输入正确格式的邮箱地址', trigger: 'blur'}
                     ]
                 }
             }
