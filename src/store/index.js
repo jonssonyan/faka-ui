@@ -11,7 +11,9 @@ const store = new Vuex.Store({
         setAuthorization(state, token) {
             state.Authorization = token
         },
-
+        getAuthorization(state) {
+            return state.Authorization
+        }
     }
 });
 
