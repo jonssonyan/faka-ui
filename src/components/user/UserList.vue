@@ -175,7 +175,7 @@
         },
         methods: {
             async getUserList() {
-                let {data: res} = await this.$http.post(`/user/admin/findByPage/${this.queryInfo.pageNum}/${this.queryInfo.pageSize}`, this.queryInfo);
+                let {data: res} = await this.$http.post(`/api/user/selectPage`, this.queryInfo);
                 if (res.code !== 1) return this.$message.error("获取分类列表失败！");
                 this.userList = res.data.records;
                 this.total = res.data.total

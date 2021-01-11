@@ -23,7 +23,7 @@
                         <!--一级菜单模板区域-->
                         <template slot="title">
                             <!--图标-->
-                            <i :class="iconObj[item.id-1]"></i>
+                            <i :class="item.icon"></i>
                             <!--文本-->
                             <span>{{item.name}}</span>
                         </template>
@@ -33,7 +33,7 @@
                                       @click="saveNavState('/'+menu.path)">
                             <template slot="title">
                                 <!--图标-->
-                                <i class="el-icon-menu"></i>
+                                <i :class="menu.icon"></i>
                                 <!--文本-->
                                 <span>{{menu.name}}</span>
                             </template>
@@ -56,16 +56,6 @@
         data() {
             return {
                 menuList: [],
-                iconObj: {
-                    '0': 'el-icon-s-home',
-                    '1': 'el-icon-user-solid',
-                    '2': 'el-icon-star-on',
-                    '3': 'el-icon-s-goods',
-                    '4': 'el-icon-s-comment',
-                    '5': 'el-icon-s-order',
-                    '6': 'el-icon-s-tools',
-                    '18': 'el-icon-collection-tag'
-                },
                 isCollapse: false,
                 activePath: '',
                 menuListForm: {
