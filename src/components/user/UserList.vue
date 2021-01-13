@@ -20,15 +20,15 @@
                 </el-col>
                 <!--搜索按钮-->
                 <el-col :span="4">
-                    <el-button type="primary" @click="getUserList()">搜索</el-button>
+                    <el-button type="primary" @click="getUserList">搜索</el-button>
                 </el-col>
                 <!--添加区域-->
                 <el-col :span="4">
-                    <el-button type="primary" @click="showAddDialog()">添加用户</el-button>
+                    <el-button type="primary" @click="showAddDialog">添加用户</el-button>
                 </el-col>
             </el-row>
             <!--用户列表区域-->
-            <el-table :data="userList" border stripe>
+            <el-table :data="userList.records" border stripe>
                 <el-table-column label="#" type="index"></el-table-column>
                 <el-table-column label="用户名" prop="username"></el-table-column>
                 <el-table-column label="邮箱" prop="email"></el-table-column>
@@ -36,6 +36,8 @@
                 <el-table-column label="是否禁用">
                     <template slot-scope="scope">
                         <el-switch
+                                :active-value=0
+                                :inactive-value=1
                                 v-model="scope.row.state" @change="stateChange(scope.row)">
                         </el-switch>
                     </template>
@@ -57,13 +59,13 @@
             </el-table>
             <!--分页区域-->
             <el-pagination
-                    @size-change="handleSizeChange()"
-                    @current-change="handleCurrentChange()"
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
                     :current-page="queryInfo.pageNum"
                     :page-sizes="[10, 20, 30, 40]"
                     :page-size="queryInfo.pageSize"
                     layout="total, sizes, prev, pager, next, jumper"
-                    :total="total">
+                    :total="userList.total">
             </el-pagination>
         </el-card>
         <!--添加用户的对话框-->
@@ -138,10 +140,10 @@
                     pageNum: 1,
                     pageSize: 10
                 },
-                userList: [],
-                total: 0,
-                // 设置添加用户弹框的显示和隐藏
-                addDialogVisible: false,
+                userList: {
+                    records: [],
+                    total: 0,
+                },
                 // 添加的用户对象
                 addUserForm: {
                     state: true
@@ -152,21 +154,24 @@
                 addUserRules: {
                     username: [
                         {required: true, message: '请输入用户名', trigger: 'blur'},
-                        {min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur'}
+                        {min: 5, max: 15, message: '长度在 5 到 5 个字符', trigger: 'blur'}
                     ],
                     password: [
                         {required: true, message: '请输入密码', trigger: 'blur'},
-                        {min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur'}
+                        {min: 5, max: 15, message: '长度在 5 到 15 个字符', trigger: 'blur'}
                     ],
                     email: [
-                        {required: true, message: '请输入邮箱', trigger: 'blur'}
+                        {required: true, message: '请输入邮箱', trigger: 'blur'},
+                        {type: 'email', message: '请输入正确格式的邮箱地址', trigger: 'blur'}
                     ]
                 },
-                // 控制修改分类对话框的显示与隐藏
+                // 控制添加用户弹框的显示和隐藏
+                addDialogVisible: false,
+                // 控制修改用户弹框的显示和隐藏
                 editDialogVisible: false,
                 options: [
-                    {label: '正常', value: true},
-                    {label: '禁用', value: false}
+                    {label: '正常', value: 1},
+                    {label: '禁用', value: 0}
                 ]
             }
         },
@@ -177,24 +182,29 @@
             async getUserList() {
                 let {data: res} = await this.$http.post(`/api/user/selectPage`, this.queryInfo);
                 if (res.code !== 1) return this.$message.error("获取分类列表失败！");
-                this.userList = res.data.records;
-                this.total = res.data.total
+                this.userList.records = res.data.records;
+                this.userList.total = res.data.total
             },
             async showAddDialog() {
                 this.addDialogVisible = true;
             },
             async stateChange(info) {
-                let {data: res} = await this.$http.post(`/user/admin/updateById/${info.id}`, info);
+                let user = {};
+                user.id = info.id;
+                user.state = info.state;
+                let {data: res} = await this.$http.post(`/api/user/saveOrUpdate`, user);
                 if (res.code !== 1) {
                     info.state = !info.state;
-                    return this.$message.error("更新状态失败")
+                    return this.$message.error(res.msg)
                 }
                 this.$message.success("更新状态成功")
             },
             async showEditDialog(id) {
-                const {data: res} = await this.$http.post(`/user/admin/selectById/${id}`);
+                let user = {};
+                user.id = id;
+                const {data: res} = await this.$http.post(`/api/user/getById`, user);
                 if (res.code !== 1) {
-                    this.$message.error("查询分类失败")
+                    this.$message.error(res.msg)
                 }
                 this.editUserForm = res.data;
                 this.editDialogVisible = true;
