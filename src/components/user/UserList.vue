@@ -146,7 +146,7 @@
                 },
                 // 添加的用户对象
                 addUserForm: {
-                    state: true
+                    state: 1
                 },
                 // 修改的用户对象
                 editUserForm: {},
@@ -217,14 +217,12 @@
                     type: 'warning'
                 }).then(async () => {
                     // 删除分类
-                    const command = {
+                    const user = {
                         ids: []
                     };
-                    command.ids[0] = id;
-                    const {data: res} = await this.$http.post(`/user/admin/deleteByIds`, command);
-                    if (res.code !== 1) {
-                        this.$message.error("删除用户失败");
-                    }
+                    user.ids[0] = id;
+                    const {data: res} = await this.$http.post(`/api/user/removeByIds`, user);
+                    if (res.code !== 1) return this.$message.error("删除用户失败");
                     this.$message.success("删除用户成功");
                     // 重新获取分类列表
                     this.getUserList();
@@ -254,9 +252,9 @@
                 this.$refs.addUserRef.validate(async valid => {
                     if (!valid) return;
                     // 发起添加用户的网络请求
-                    const {data: res} = await this.$http.post('/user/insert', this.addUserForm);
+                    const {data: res} = await this.$http.post('/api/user/saveOrUpdate', this.addUserForm);
                     if (res.code !== 1) {
-                        this.$message.error(res.data)
+                        return this.$message.error(res.msg)
                     }
                     this.$message.success("添加用户成功");
                     // 隐藏添加分类对话框
@@ -269,9 +267,9 @@
                 this.$refs.addCategoryRef.validate(async valid => {
                     if (!valid) return;
                     // 发起修改用户的网络请求
-                    const {data: res} = await this.$http.post(`/user/admin/updateById/${this.editUserForm.id}`, this.editUserForm);
+                    const {data: res} = await this.$http.post(`/api/user/saveOrUpdate`, this.editUserForm);
                     if (res.code !== 1) {
-                        this.$message.error(res.data)
+                        return this.$message.error(res.msg)
                     }
                     this.$message.success("修改用户成功");
                     // 隐藏添加分类对话框
