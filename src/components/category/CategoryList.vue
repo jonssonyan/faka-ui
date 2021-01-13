@@ -10,14 +10,14 @@
         <el-card>
             <el-row :gutter="20">
                 <!--搜索与添加区域-->
-                <el-col :span="8">
+                <el-col :span="6">
                     <el-input placeholder="请输入内容" v-model="queryInfo.name" clearable @clear="getCategoryList()">
                         <el-button slot="append" icon="el-icon-search" @click="getCategoryList()"></el-button>
                     </el-input>
                 </el-col>
                 <!--添加区域-->
                 <el-col :span="4">
-                    <el-button type="primary" @click="showAddDialog()">添加分类</el-button>
+                    <el-button type="primary" @click="showAddDialog">添加分类</el-button>
                 </el-col>
             </el-row>
             <!--分类列表区域-->
@@ -70,8 +70,8 @@
                     <el-input v-model="addCategoryForm.name"></el-input>
                 </el-form-item>
                 <el-form-item label="父级" prop="parent">
-                    <el-select v-model="addCategoryForm.parent" placeholder="请选择">
-                        <el-option v-for="item in categoryFormExceptSelf"
+                    <el-select filterable v-model="addCategoryForm.parentId" placeholder="请选择">
+                        <el-option v-for="item in categoryForm"
                                    :key="item.id"
                                    :value="item.id"
                                    :label="item.name">
@@ -90,7 +90,7 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
     <el-button @click="addDialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="addCategory()">确 定</el-button>
+    <el-button type="primary" @click="addCategory">确 定</el-button>
   </span>
         </el-dialog>
         <!--修改分类的对话框-->
@@ -139,35 +139,38 @@
                     pageNum: 1,
                     pageSize: 10
                 },
-                categoryList: [],
-                total: 0,
-                // 设置添加分类弹框的显示和隐藏
+
+                categoryList: {
+                    records: [],
+                    total: 0
+                },
+                //  控制添加分类弹框的显示和隐藏
                 addDialogVisible: false,
+                // 控制修改分类对话框的显示与隐藏
+                editDialogVisible: false,
                 // 添加的分类对象
                 addCategoryForm: {
-                    parent: null,
-                    state: true
+                    parentId: null,
+                    state: 1,
                 },
                 // 修改的分类对象
                 editCategoryForm: {},
                 // 添加分类的验证规则
                 addCategoryRules: {
                     name: [
-                        {required: true, message: '请输入名称', trigger: 'blur'},
-                        {min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur'}
+                        {required: true, message: '请输入用户名', trigger: 'blur'},
+                        {min: 5, max: 15, message: '长度在 5 到 5 个字符', trigger: 'blur'}
                     ],
-                    parent: [],
                     state: [
                         {required: true, message: '请输入状态', trigger: 'blur'}
                     ]
                 },
                 options: [
-                    {label: '上架', value: true},
-                    {label: '下架', value: false}
+                    {label: '上架', value: 1},
+                    {label: '下架', value: 0}
                 ],
-                categoryFormExceptSelf: [],
-                // 控制修改分类对话框的显示与隐藏
-                editDialogVisible: false
+                // 分类列表，用于选择父级菜单
+                categoryForm: [],
             }
         },
         created() {
@@ -175,7 +178,7 @@
         },
         methods: {
             async getCategoryList() {
-                let {data: res} = await this.$http.post(`/category/admin/findByPage/${this.queryInfo.pageNum}/${this.queryInfo.pageSize}`, this.queryInfo);
+                let {data: res} = await this.$http.post(`/api/category/selectPage`, this.queryInfo);
                 if (res.code !== 1) return this.$message.error("获取分类列表失败！");
                 this.categoryList = res.data.records;
                 this.total = res.data.total
@@ -206,11 +209,8 @@
             addCategory() {
                 this.$refs.addCategoryRef.validate(async valid => {
                     if (!valid) return;
-                    // 发起添加分类的网络请求
-                    const {data: res} = await this.$http.post('/category/admin/insert', this.addCategoryForm);
-                    if (res.code !== 1) {
-                        this.$message.error(res.data)
-                    }
+                    const {data: res} = await this.$http.post('/api/category/saveOrUpdate', this.addCategoryForm);
+                    if (res.code !== 1) this.$message.error(res.data)
                     this.$message.success("添加分类成功");
                     // 隐藏添加分类对话框
                     this.addDialogVisible = false;
@@ -234,11 +234,9 @@
             },
             // 展示添加分类的对话框
             async showAddDialog() {
-                const {data: res} = await this.$http.post(`/category/findAll`);
-                if (res.code !== 1) {
-                    this.$message.error("查询分类失败")
-                }
-                this.categoryFormExceptSelf = res.data;
+                const {data: res} = await this.$http.post(`/api/category/select`, {});
+                if (res.code !== 1) return this.$message.error(res.msg);
+                this.categoryForm = res.data;
                 this.addDialogVisible = true;
             },
             // 修改分类信息并提交
@@ -267,13 +265,12 @@
                     type: 'warning'
                 }).then(async () => {
                     // 删除分类
-                    const command = {
-                        ids: []
+                    let category = {
+                        id: id
                     };
-                    command.ids[0] = id;
-                    const {data: res} = await this.$http.post(`/category/admin/deleteByIds`, command);
+                    const {data: res} = await this.$http.post(`/api/category/removeById`, category);
                     if (res.code !== 1) {
-                        this.$message.error("删除分类失败");
+                        return this.$message.error(res.msg);
                     }
                     this.$message.success("删除分类成功");
                     // 重新获取分类列表
