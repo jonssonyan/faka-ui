@@ -10,27 +10,29 @@
         <el-card>
             <el-row :gutter="20">
                 <!--搜索与添加区域-->
-                <el-col :span="8">
+                <el-col :span="6">
                     <el-input placeholder="请输入内容" v-model="queryInfo.name" clearable @clear="getProductList()">
                         <el-button slot="append" icon="el-icon-search" @click="getProductList()"></el-button>
                     </el-input>
                 </el-col>
                 <!--添加区域-->
                 <el-col :span="4">
-                    <el-button type="primary" @click="showAddDialog()">添加产品</el-button>
+                    <el-button type="primary" @click="showAddDialog">添加产品</el-button>
                 </el-col>
             </el-row>
             <!--产品列表区域-->
-            <el-table :data="productList" border stripe>
+            <el-table :data="productList.records" border stripe>
                 <el-table-column label="#" type="index"></el-table-column>
                 <el-table-column label="名称" prop="name"></el-table-column>
-                <el-table-column label="价格" prop="price"></el-table-column>
-                <el-table-column label="分类" prop="categoryName"></el-table-column>
+                <el-table-column label="价格(元)" prop="price"></el-table-column>
+                <el-table-column label="分类" prop="category.name"></el-table-column>
                 <el-table-column label="创建时间" prop="createTime"></el-table-column>
                 <el-table-column label="是否上架">
                     <template slot-scope="scope">
-                        <el-switch
-                                v-model="scope.row.state" @change="stateChange(scope.row)">
+                        <el-switch :active-value=1
+                                   :inactive-value=0
+                                   v-model="scope.row.state"
+                                   @change="stateChange(scope.row)">
                         </el-switch>
                     </template>
                 </el-table-column>
@@ -39,12 +41,12 @@
                         <!--修改-->
                         <el-tooltip effect="dark" content="修改" placement="top" :enterable="false">
                             <el-button type="primary" icon="el-icon-edit" size="mini"
-                                       @click="showEditDialog(scope.row.id)"></el-button>
+                                       @click="showEditDialog(scope.row)"></el-button>
                         </el-tooltip>
                         <!--删除-->
                         <el-tooltip effect="dark" content="删除" placement="top" :enterable="false">
                             <el-button type="danger" icon="el-icon-delete" size="mini"
-                                       @click="removeProductById(scope.row.id)"></el-button>
+                                       @click="removeProductById(scope.row)"></el-button>
                         </el-tooltip>
                     </template>
                 </el-table-column>
@@ -57,7 +59,7 @@
                     :page-sizes="[10, 20, 30, 40]"
                     :page-size="queryInfo.pageSize"
                     layout="total, sizes, prev, pager, next, jumper"
-                    :total="total">
+                    :total="productList.total">
             </el-pagination>
         </el-card>
         <!--添加产品的对话框-->
@@ -71,12 +73,12 @@
                 <el-form-item label="名称" prop="name">
                     <el-input v-model="addProductForm.name"></el-input>
                 </el-form-item>
-                <el-form-item label="价格" prop="price">
+                <el-form-item label="价格(元)" prop="price">
                     <el-input v-model="addProductForm.price"></el-input>
                 </el-form-item>
-                <el-form-item label="分类" prop="categoryName">
+                <el-form-item label="分类" prop="categoryId">
                     <el-select v-model="addProductForm.categoryId" placeholder="请选择">
-                        <el-option v-for="item in categoryFormExceptSelf"
+                        <el-option v-for="item in categoryForm"
                                    :key="item.id"
                                    :value="item.id"
                                    :label="item.name">
@@ -95,7 +97,7 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
     <el-button @click="addDialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="addProduct()">确 定</el-button>
+    <el-button type="primary" @click="addProduct">确 定</el-button>
   </span>
         </el-dialog>
         <!--修改产品的对话框-->
@@ -108,12 +110,12 @@
                 <el-form-item label="名称" prop="name">
                     <el-input v-model="editProductForm.name"></el-input>
                 </el-form-item>
-                <el-form-item label="价格" prop="price">
+                <el-form-item label="价格(元)" prop="price">
                     <el-input v-model="editProductForm.price"></el-input>
                 </el-form-item>
-                <el-form-item label="分类" prop="categoryName">
+                <el-form-item label="分类" prop="category">
                     <el-select v-model="editProductForm.categoryId" placeholder="请选择">
-                        <el-option v-for="item in categoryFormExceptSelf"
+                        <el-option v-for="item in categoryForm"
                                    :key="item.id"
                                    :value="item.id"
                                    :label="item.name">
@@ -147,14 +149,17 @@
                     pageNum: 1,
                     pageSize: 10
                 },
-                productList: [],
-                total: 0,
-                // 设置添加产品弹框的显示和隐藏
+                productList: {
+                    records: [],
+                    total: 0
+                },
+                // 控制添加产品弹框的显示和隐藏
                 addDialogVisible: false,
+                // 控制修改产品对话框的显示与隐藏
+                editDialogVisible: false,
                 // 添加的产品对象
                 addProductForm: {
-                    parent: null,
-                    state: true
+                    state: 1
                 },
                 // 修改的产品对象
                 editProductForm: {},
@@ -162,22 +167,25 @@
                 addProductRules: {
                     name: [
                         {required: true, message: '请输入名称', trigger: 'blur'},
-                        {min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur'}
+                        {min: 2, max: 15, message: '长度在 2 到 15 个字符', trigger: 'blur'}
                     ],
                     price: [
+                        {min: 0, message: '价格必须大于0', trigger: 'blur'},
                         {required: true, message: '请输入商品价格', trigger: 'blur'}
+                    ],
+                    categoryId: [
+                        {required: true, message: '请输入商品分类', trigger: 'blur'}
                     ],
                     state: [
                         {required: true, message: '请输入状态', trigger: 'blur'}
                     ]
                 },
                 options: [
-                    {label: '上架', value: true},
-                    {label: '下架', value: false}
+                    {label: '上架', value: 1},
+                    {label: '下架', value: 0}
                 ],
-                categoryFormExceptSelf: [],
-                // 控制修改产品对话框的显示与隐藏
-                editDialogVisible: false
+                // 分类列表，用于选择父级菜单
+                categoryForm: []
             }
         },
         created() {
@@ -185,14 +193,10 @@
         },
         methods: {
             async getProductList() {
-                let {data: res} = await this.$http.post(`/product/admin/selectByPage/${this.queryInfo.pageNum}/${this.queryInfo.pageSize}`, this.queryInfo);
+                let {data: res} = await this.$http.post(`/api/product/selectPage`, this.queryInfo);
                 if (res.code !== 1) return this.$message.error("获取产品列表失败！");
-                this.total = res.data.total;
-                for (const product of res.data.records) {
-                    let {data: res} = await this.$http.post(`/category/admin/selectById/${product.categoryId}`);
-                    product.categoryName = res.data.name
-                }
-                this.productList = res.data.records;
+                this.productList.total = res.data.total;
+                this.productList.records = res.data.records;
             },
             // 监听pageSize改变的事件
             handleSizeChange(newSize) {
@@ -221,10 +225,8 @@
                 this.$refs.addProductRef.validate(async valid => {
                     if (!valid) return;
                     // 发起添加产品的网络请求
-                    const {data: res} = await this.$http.post('/product/admin/insert', this.addProductForm);
-                    if (res.code !== 1) {
-                        this.$message.error(res.data)
-                    }
+                    const {data: res} = await this.$http.post('/api/product/saveOrUpdate', this.addProductForm);
+                    if (res.code !== 1) return this.$message.error(res.data);
                     this.$message.success("添加产品成功");
                     // 隐藏添加产品对话框
                     this.addDialogVisible = false;
@@ -233,29 +235,23 @@
                 })
             },
             // 展示修改产品的对话框
-            async showEditDialog(id) {
-                const {data: res} = await this.$http.post(`/product/selectOne/${id}`);
-                if (res.code !== 1) {
-                    this.$message.error("查询产品失败")
-                }
-
-                let category = {};
-                category.id = this.editProductForm.categoryId;
-                const {data: res1} = await this.$http.post(`/category/findAllExceptSelf`, category);
-                if (res1.code !== 1) {
-                    this.$message.error("查询分类失败")
-                }
-                this.categoryFormExceptSelf = res1.data;
+            async showEditDialog(product) {
+                const {data: res} = await this.$http.post(`/api/product/getById`, product);
+                if (res.code !== 1) return this.$message.error("查询产品失败");
                 this.editProductForm = res.data;
+                let category = {
+                    id: product.categoryId
+                };
+                const {data: res1} = await this.$http.post(`/api/category/select`, category);
+                if (res1.code !== 1) return this.$message.error("查询分类失败");
+                this.categoryForm = res1.date;
                 this.editDialogVisible = true;
             },
             // 展示添加产品的对话框
             async showAddDialog() {
-                const {data: res} = await this.$http.post(`/category/findAll`);
-                if (res.code !== 1) {
-                    this.$message.error("查询分类失败")
-                }
-                this.categoryFormExceptSelf = res.data;
+                const {data: res} = await this.$http.post(`/api/category/select`, {});
+                if (res.code !== 1) return this.$message.error("查询分类失败");
+                this.categoryForm = res.data;
                 this.addDialogVisible = true;
             },
             // 修改产品信息并提交

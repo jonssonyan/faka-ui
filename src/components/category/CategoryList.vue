@@ -174,7 +174,7 @@
                     {label: '下架', value: 0}
                 ],
                 // 分类列表，用于选择父级菜单
-                categoryForm: [],
+                categoryForm: []
             }
         },
         created() {
