@@ -27,8 +27,10 @@
                 <el-table-column label="创建时间" prop="createTime"></el-table-column>
                 <el-table-column label="是否上架">
                     <template slot-scope="scope">
-                        <el-switch
-                                v-model="scope.row.state" @change="stateChange(scope.row)">
+                        <el-switch :active-value=1
+                                   :inactive-value=0
+                                   v-model="scope.row.state"
+                                   @change="stateChange(scope.row)">
                         </el-switch>
                     </template>
                 </el-table-column>
@@ -37,7 +39,7 @@
                         <!--修改-->
                         <el-tooltip effect="dark" content="修改" placement="top" :enterable="false">
                             <el-button type="primary" icon="el-icon-edit" size="mini"
-                                       @click="showEditDialog(scope.row.id)"></el-button>
+                                       @click="showEditDialog(scope.row)"></el-button>
                         </el-tooltip>
                         <!--删除-->
                         <el-tooltip effect="dark" content="删除" placement="top" :enterable="false">
@@ -55,7 +57,7 @@
                     :page-sizes="[10, 20, 30, 40]"
                     :page-size="queryInfo.pageSize"
                     layout="total, sizes, prev, pager, next, jumper"
-                    :total="total">
+                    :total="categoryList.total">
             </el-pagination>
         </el-card>
         <!--添加分类的对话框-->
@@ -69,7 +71,7 @@
                 <el-form-item label="名称" prop="name">
                     <el-input v-model="addCategoryForm.name"></el-input>
                 </el-form-item>
-                <el-form-item label="父级" prop="parent">
+                <el-form-item label="父级" prop="parentId">
                     <el-select filterable v-model="addCategoryForm.parentId" placeholder="请选择">
                         <el-option v-for="item in categoryForm"
                                    :key="item.id"
@@ -104,8 +106,8 @@
                     <el-input v-model="editCategoryForm.name"></el-input>
                 </el-form-item>
                 <el-form-item label="父级" prop="parent">
-                    <el-select v-model="editCategoryForm.parent" placeholder="请选择">
-                        <el-option v-for="item in categoryFormExceptSelf"
+                    <el-select v-model="editCategoryForm.parentId" placeholder="请选择">
+                        <el-option v-for="item in categoryForm"
                                    :key="item.id"
                                    :value="item.id"
                                    :label="item.name">
@@ -124,7 +126,7 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
     <el-button @click="editDialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="editCategoryInfo()">确 定</el-button>
+    <el-button type="primary" @click="editCategoryInfo">确 定</el-button>
   </span>
         </el-dialog>
     </div>
@@ -154,12 +156,14 @@
                     state: 1,
                 },
                 // 修改的分类对象
-                editCategoryForm: {},
+                editCategoryForm: {
+                    parentId: null
+                },
                 // 添加分类的验证规则
                 addCategoryRules: {
                     name: [
                         {required: true, message: '请输入用户名', trigger: 'blur'},
-                        {min: 5, max: 15, message: '长度在 5 到 5 个字符', trigger: 'blur'}
+                        {min: 2, max: 15, message: '长度在 2 到 5 个字符', trigger: 'blur'}
                     ],
                     state: [
                         {required: true, message: '请输入状态', trigger: 'blur'}
@@ -181,7 +185,7 @@
                 let {data: res} = await this.$http.post(`/api/category/selectPage`, this.queryInfo);
                 if (res.code !== 1) return this.$message.error("获取分类列表失败！");
                 this.categoryList = res.data.records;
-                this.total = res.data.total
+                this.categoryList.total = res.data.total
             },
             // 监听pageSize改变的事件
             handleSizeChange(newSize) {
@@ -194,7 +198,7 @@
                 this.getCategoryList()
             },
             async stateChange(info) {
-                let {data: res} = await this.$http.post(`/category/admin/updateById/${info.id}`, info);
+                let {data: res} = await this.$http.post(`/api/category/saveOrUpdate`, info);
                 if (res.code !== 1) {
                     info.state = !info.state;
                     return this.$message.error("更新状态失败")
@@ -210,7 +214,7 @@
                 this.$refs.addCategoryRef.validate(async valid => {
                     if (!valid) return;
                     const {data: res} = await this.$http.post('/api/category/saveOrUpdate', this.addCategoryForm);
-                    if (res.code !== 1) this.$message.error(res.data)
+                    if (res.code !== 1) return this.$message.error(res.msg);
                     this.$message.success("添加分类成功");
                     // 隐藏添加分类对话框
                     this.addDialogVisible = false;
@@ -219,17 +223,13 @@
                 })
             },
             // 展示修改分类的对话框
-            async showEditDialog(id) {
-                const {data: res} = await this.$http.post(`/category/admin/selectById/${id}`);
-                if (res.code !== 1) {
-                    this.$message.error("查询分类失败")
-                }
+            async showEditDialog(category) {
+                const {data: res} = await this.$http.post(`/api/category/getById`, category);
+                if (res.code !== 1) return this.$message.error("查询分类失败");
                 this.editCategoryForm = res.data;
-                const {data: res1} = await this.$http.post(`/category/findAllExceptSelf`, this.editCategoryForm);
-                if (res.code !== 1) {
-                    this.$message.error("查询分类失败")
-                }
-                this.categoryFormExceptSelf = res1.data;
+                const {data: res1} = await this.$http.post(`/api/category/select`, this.editCategoryForm);
+                if (res.code !== 1) return this.$message.error("查询分类失败");
+                this.categoryForm = res1.data;
                 this.editDialogVisible = true;
             },
             // 展示添加分类的对话框
@@ -240,15 +240,11 @@
                 this.addDialogVisible = true;
             },
             // 修改分类信息并提交
-            editCategoryInfo(id) {
+            editCategoryInfo() {
                 this.$refs.addCategoryRef.validate(async valid => {
                     if (!valid) return;
-                    // 发起修改分类的网络请求
-                    id = this.editCategoryForm.id;
-                    const {data: res} = await this.$http.post(`/category/admin/updateById/${id}`, this.editCategoryForm);
-                    if (res.code !== 1) {
-                        this.$message.error(res.data)
-                    }
+                    const {data: res} = await this.$http.post(`/api/category/saveOrUpdate`, this.editCategoryForm);
+                    if (res.code !== 1) return this.$message.error(res.msg);
                     this.$message.success("修改分类成功");
                     // 隐藏添加分类对话框
                     this.editDialogVisible = false;
@@ -269,9 +265,7 @@
                         id: id
                     };
                     const {data: res} = await this.$http.post(`/api/category/removeById`, category);
-                    if (res.code !== 1) {
-                        return this.$message.error(res.msg);
-                    }
+                    if (res.code !== 1) return this.$message.error(res.msg);
                     this.$message.success("删除分类成功");
                     // 重新获取分类列表
                     this.getCategoryList();

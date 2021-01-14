@@ -38,7 +38,8 @@
                         <el-switch
                                 :active-value=0
                                 :inactive-value=1
-                                v-model="scope.row.state" @change="stateChange(scope.row)">
+                                v-model="scope.row.state"
+                                @change="stateChange(scope.row)">
                         </el-switch>
                     </template>
                 </el-table-column>
@@ -189,10 +190,7 @@
                 this.addDialogVisible = true;
             },
             async stateChange(info) {
-                let user = {};
-                user.id = info.id;
-                user.state = info.state;
-                let {data: res} = await this.$http.post(`/api/user/saveOrUpdate`, user);
+                let {data: res} = await this.$http.post(`/api/user/saveOrUpdate`, info);
                 if (res.code !== 1) {
                     info.state = !info.state;
                     return this.$message.error(res.msg)
