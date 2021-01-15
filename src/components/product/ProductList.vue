@@ -77,7 +77,7 @@
                     <el-input v-model="addProductForm.price"></el-input>
                 </el-form-item>
                 <el-form-item label="分类" prop="categoryId">
-                    <el-select v-model="addProductForm.categoryId" placeholder="请选择">
+                    <el-select filterable v-model="addProductForm.categoryId" placeholder="请选择">
                         <el-option v-for="item in categoryForm"
                                    :key="item.id"
                                    :value="item.id"
@@ -113,8 +113,8 @@
                 <el-form-item label="价格(元)" prop="price">
                     <el-input v-model="editProductForm.price"></el-input>
                 </el-form-item>
-                <el-form-item label="分类" prop="category">
-                    <el-select v-model="editProductForm.categoryId" placeholder="请选择">
+                <el-form-item label="分类" prop="categoryId">
+                    <el-select filterable v-model="editProductForm.categoryId" placeholder="请选择">
                         <el-option v-for="item in categoryForm"
                                    :key="item.id"
                                    :value="item.id"
@@ -134,7 +134,7 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
     <el-button @click="editDialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="editProductInfo()">确 定</el-button>
+    <el-button type="primary" @click="editProductInfo">确 定</el-button>
   </span>
         </el-dialog>
     </div>
@@ -209,7 +209,7 @@
                 this.getProductList()
             },
             async stateChange(info) {
-                let {data: res} = await this.$http.post(`/product/admin/updateById/${info.id}`, info);
+                let {data: res} = await this.$http.post(`/api/product/saveOrUpdate`, info);
                 if (res.code !== 1) {
                     info.state = !info.state;
                     return this.$message.error("更新状态失败")
@@ -238,13 +238,10 @@
             async showEditDialog(product) {
                 const {data: res} = await this.$http.post(`/api/product/getById`, product);
                 if (res.code !== 1) return this.$message.error("查询产品失败");
-                this.editProductForm = res.data;
-                let category = {
-                    id: product.categoryId
-                };
-                const {data: res1} = await this.$http.post(`/api/category/select`, category);
+                const {data: res1} = await this.$http.post(`/api/category/select`, {});
                 if (res1.code !== 1) return this.$message.error("查询分类失败");
-                this.categoryForm = res1.date;
+                this.editProductForm = res.data;
+                this.categoryForm = res1.data;
                 this.editDialogVisible = true;
             },
             // 展示添加产品的对话框
@@ -255,15 +252,12 @@
                 this.addDialogVisible = true;
             },
             // 修改产品信息并提交
-            editProductInfo(id) {
+            editProductInfo() {
                 this.$refs.addProductRef.validate(async valid => {
                     if (!valid) return;
                     // 发起修改产品的网络请求
-                    id = this.editProductForm.id;
-                    const {data: res} = await this.$http.post(`/product/admin/updateById/${id}`, this.editProductForm);
-                    if (res.code !== 1) {
-                        this.$message.error(res.data)
-                    }
+                    const {data: res} = await this.$http.post(`/api/product/saveOrUpdate`, this.editProductForm);
+                    if (res.code !== 1) return this.$message.error(res.msg);
                     this.$message.success("修改产品成功");
                     // 隐藏添加产品对话框
                     this.editDialogVisible = false;
@@ -272,7 +266,7 @@
                 })
             },
             // 根据id删除产品信息
-            async removeProductById(id) {
+            async removeProductById(product) {
                 // 弹框询问用户是否删除产品
                 await this.$confirm('此操作将永久删除该产品, 是否继续?', '提示', {
                     confirmButtonText: '确定',
@@ -280,14 +274,8 @@
                     type: 'warning'
                 }).then(async () => {
                     // 删除产品
-                    const command = {
-                        ids: []
-                    };
-                    command.ids[0] = id;
-                    const {data: res} = await this.$http.post(`/product/admin/deleteByIds`, command);
-                    if (res.code !== 1) {
-                        this.$message.error("删除产品失败");
-                    }
+                    const {data: res} = await this.$http.post(`/api/product/removeById`, product);
+                    if (res.code !== 1) return this.$message.error("删除产品失败");
                     this.$message.success("删除产品成功");
                     // 重新获取产品列表
                     this.getProductList();

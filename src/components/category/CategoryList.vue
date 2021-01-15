@@ -105,8 +105,8 @@
                 <el-form-item label="名称" prop="name">
                     <el-input v-model="editCategoryForm.name"></el-input>
                 </el-form-item>
-                <el-form-item label="父级" prop="parent">
-                    <el-select v-model="editCategoryForm.parentId" placeholder="请选择">
+                <el-form-item label="父级" prop="parentId">
+                    <el-select filterable v-model="editCategoryForm.parentId" placeholder="请选择">
                         <el-option v-for="item in categoryForm"
                                    :key="item.id"
                                    :value="item.id"
