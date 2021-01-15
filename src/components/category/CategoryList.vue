@@ -11,8 +11,8 @@
             <el-row :gutter="20">
                 <!--搜索与添加区域-->
                 <el-col :span="6">
-                    <el-input placeholder="请输入内容" v-model="queryInfo.name" clearable @clear="getCategoryList()">
-                        <el-button slot="append" icon="el-icon-search" @click="getCategoryList()"></el-button>
+                    <el-input placeholder="请输入内容" v-model="queryInfo.name" clearable @clear="getCategoryList">
+                        <el-button slot="append" icon="el-icon-search" @click="getCategoryList"></el-button>
                     </el-input>
                 </el-col>
                 <!--添加区域-->
@@ -21,7 +21,7 @@
                 </el-col>
             </el-row>
             <!--分类列表区域-->
-            <el-table :data="categoryList" border stripe>
+            <el-table :data="categoryList.records" border stripe>
                 <el-table-column label="#" type="index"></el-table-column>
                 <el-table-column label="名称" prop="name"></el-table-column>
                 <el-table-column label="创建时间" prop="createTime"></el-table-column>
@@ -141,7 +141,6 @@
                     pageNum: 1,
                     pageSize: 10
                 },
-
                 categoryList: {
                     records: [],
                     total: 0
@@ -184,7 +183,7 @@
             async getCategoryList() {
                 let {data: res} = await this.$http.post(`/api/category/selectPage`, this.queryInfo);
                 if (res.code !== 1) return this.$message.error("获取分类列表失败！");
-                this.categoryList = res.data.records;
+                this.categoryList.records = res.data.records;
                 this.categoryList.total = res.data.total
             },
             // 监听pageSize改变的事件
