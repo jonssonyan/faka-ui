@@ -244,7 +244,7 @@
                 this.getUserList()
             },
             addDialogClosed() {
-                this.$refs.addUserRef.resetFields();
+                this.$refs['addUserRef'].resetFields();
             },
             addUser() {
                 this.$refs.addUserRef.validate(async valid => {

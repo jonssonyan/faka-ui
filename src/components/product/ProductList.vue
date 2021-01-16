@@ -218,7 +218,7 @@
             },
             // 监听添加产品对话框的关闭事件
             addDialogClosed() {
-                this.$refs.addProductRef.resetFields();
+                this.$refs['addProductRef'].resetFields();
             },
             // 点击按钮添加新产品
             addProduct() {

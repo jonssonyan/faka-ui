@@ -55,7 +55,7 @@
         methods: {
             // 点击重设按钮，重设登录表单
             resetLoginForm() {
-                this.$refs.loginFormRef.resetFields()
+                this.$refs['loginFormRef'].resetFields()
             },
             login() {
                 this.$refs.loginFormRef.validate(async valid => {

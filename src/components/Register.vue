@@ -83,7 +83,7 @@
                 })
             },
             reset() {
-                this.$refs.registerRef.resetFields();
+                this.$refs['registerRef'].resetFields();
             },
             toLogin() {
                 this.$router.push('/login')

@@ -206,7 +206,7 @@
             },
             // 监听添加分类对话框的关闭事件
             addDialogClosed() {
-                this.$refs.addCategoryRef.resetFields();
+                this.$refs['addCategoryRef'].resetFields();
             },
             // 点击按钮添加新分类
             addCategory() {
