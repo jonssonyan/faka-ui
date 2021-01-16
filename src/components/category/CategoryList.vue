@@ -161,8 +161,8 @@
                 // 添加分类的验证规则
                 addCategoryRules: {
                     name: [
-                        {required: true, message: '请输入用户名', trigger: 'blur'},
-                        {min: 2, max: 15, message: '长度在 2 到 5 个字符', trigger: 'blur'}
+                        {required: true, message: '请输入分类名称', trigger: 'blur'},
+                        {min: 2, max: 15, message: '长度在 2 到 15 个字符', trigger: 'blur'}
                     ],
                     state: [
                         {required: true, message: '请输入状态', trigger: 'blur'}
