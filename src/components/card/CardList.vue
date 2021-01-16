@@ -35,15 +35,10 @@
                     </el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
-                            <!--修改-->
-                            <el-tooltip effect="dark" content="修改" placement="top" :enterable="false">
-                                <el-button type="primary" icon="el-icon-edit" size="mini"
-                                           @click="showEditDialog(scope.row)"></el-button>
-                            </el-tooltip>
                             <!--删除-->
                             <el-tooltip effect="dark" content="删除" placement="top" :enterable="false">
                                 <el-button type="danger" icon="el-icon-delete" size="mini"
-                                           @click="removeById(scope.row.id)"></el-button>
+                                           @click="removeById(scope.row)"></el-button>
                             </el-tooltip>
                         </template>
                     </el-table-column>
@@ -121,10 +116,10 @@
                         {min: 2, max: 15, message: '长度在 2 到 15 个字符', trigger: 'blur'}
                     ],
                     state: [
-                        {required: true, message: '请输入卡密内容', trigger: 'blur'}
+                        {required: true, message: '请输入状态', trigger: 'blur'}
                     ],
                     productId: [
-                        {required: true, message: '请输入卡密内容', trigger: 'blur'}
+                        {required: true, message: '请输入商品名称', trigger: 'blur'}
                     ]
                 },
                 productList: [],
@@ -155,7 +150,7 @@
                 this.getCardList()
             },
             addDialogClosed() {
-                this.$refs['addCardRef'].resetFields();
+                this.$refs.addCardRef.resetFields();
             },
             // 展示修改订单的对话框
             async showAddDialog() {
@@ -165,31 +160,31 @@
             },
             // 添加订单信息并提交
             addOrderInfo() {
-                this.$refs.addOrderRef.validate(async valid => {
+                this.$refs.addCardRef.validate(async valid => {
                     if (!valid) return;
                     const {data: res} = await this.$http.post(`/api/card/saveOrUpdate`, this.addCardForm);
                     if (res.code !== 1) return this.$message.error(res.msg);
                     this.$message.success("修改订单成功");
+                    // 重新获取订单列表
+                    this.getCardList();
                     // 隐藏添加订单对话框
                     this.addDialogVisible = false;
-                    // 重新获取订单列表
-                    this.getOrderList();
                 })
             },
             // 根据id删除订单信息
-            async removeOrderById(card) {
+            async removeById(card) {
                 // 弹框询问用户是否删除订单
-                await this.$confirm('此操作将永久删除该订单, 是否继续?', '提示', {
+                await this.$confirm('此操作将永久删除该卡密, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(async () => {
                     // 删除订单
                     const {data: res} = await this.$http.post(`/api/card/removeById`, card);
-                    if (res.code !== 1) return this.$message.error("删除订单失败");
-                    this.$message.success("删除订单成功");
+                    if (res.code !== 1) return this.$message.error("删除卡密失败");
+                    this.$message.success("删除卡密成功");
                     // 重新获取订单列表
-                    this.getOrderList();
+                    this.getCardList();
                     this.$message({
                         type: 'success',
                         message: '删除成功!'
