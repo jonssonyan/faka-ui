@@ -219,7 +219,7 @@
                         ids: []
                     };
                     user.ids[0] = id;
-                    const {data: res} = await this.$http.post(`/api/user/removeByIds`, user);
+                    const {data: res} = await this.$http.post(`/api/user/removeById`, user);
                     if (res.code !== 1) return this.$message.error("删除用户失败");
                     this.$message.success("删除用户成功");
                     // 重新获取分类列表

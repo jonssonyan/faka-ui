@@ -212,7 +212,7 @@
                 let {data: res} = await this.$http.post(`/api/product/saveOrUpdate`, info);
                 if (res.code !== 1) {
                     info.state = !info.state;
-                    return this.$message.error("更新状态失败")
+                    return this.$message.error(res.msg)
                 }
                 this.$message.success("更新状态成功")
             },
