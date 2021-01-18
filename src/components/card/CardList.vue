@@ -19,31 +19,35 @@
                 <el-col :span="4">
                     <el-button type="primary" @click="showAddDialog">添加卡密</el-button>
                 </el-col>
-                <!--卡密列表区域-->
-                <el-table :data="cardList.records" border stripe>
-                    <el-table-column label="#" type="index"></el-table-column>
-                    <el-table-column label="商品名称" prop="product.name"></el-table-column>
-                    <el-table-column label="卡密内容" prop="content"></el-table-column>
-                    <el-table-column label="创建时间" prop="createTime"></el-table-column>
-                    <el-table-column label="是否有效">
-                        <template slot-scope="scope">
-                            <el-tag type="success" v-if="scope.row.state===0">未使用
-                            </el-tag>
-                            <el-tag type="danger" v-if="scope.row.state===1">已使用
-                            </el-tag>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="操作">
-                        <template slot-scope="scope">
-                            <!--删除-->
-                            <el-tooltip effect="dark" content="删除" placement="top" :enterable="false">
-                                <el-button type="danger" icon="el-icon-delete" size="mini"
-                                           @click="removeById(scope.row)"></el-button>
-                            </el-tooltip>
-                        </template>
-                    </el-table-column>
-                </el-table>
+                <!--导出区域-->
+                <el-col :span="4">
+                    <el-button type="primary" @click="exportCard">到处卡密</el-button>
+                </el-col>
             </el-row>
+            <!--卡密列表区域-->
+            <el-table :data="cardList.records" border stripe>
+                <el-table-column label="#" type="index"></el-table-column>
+                <el-table-column label="商品名称" prop="product.name"></el-table-column>
+                <el-table-column label="卡密内容" prop="content"></el-table-column>
+                <el-table-column label="创建时间" prop="createTime"></el-table-column>
+                <el-table-column label="是否有效">
+                    <template slot-scope="scope">
+                        <el-tag type="success" v-if="scope.row.state===0">未使用
+                        </el-tag>
+                        <el-tag type="danger" v-if="scope.row.state===1">已使用
+                        </el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作">
+                    <template slot-scope="scope">
+                        <!--删除-->
+                        <el-tooltip effect="dark" content="删除" placement="top" :enterable="false">
+                            <el-button type="danger" icon="el-icon-delete" size="mini"
+                                       @click="removeById(scope.row)"></el-button>
+                        </el-tooltip>
+                    </template>
+                </el-table-column>
+            </el-table>
             <!--分页区域-->
             <el-pagination
                     @size-change="handleSizeChange"
@@ -195,6 +199,9 @@
                         message: '已取消删除'
                     });
                 });
+            },
+            exportCard(){
+
             }
         }
     }

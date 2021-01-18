@@ -28,6 +28,7 @@
                 <el-table-column label="#" type="index"></el-table-column>
                 <el-table-column label="商品名称" prop="product.name"></el-table-column>
                 <el-table-column label="订单标题" prop="subject"></el-table-column>
+                <el-table-column label="收获地址" prop="address"></el-table-column>
                 <el-table-column label="数量" prop="quantity"></el-table-column>
                 <el-table-column label="订单号" prop="outTradeNo"></el-table-column>
                 <el-table-column label="总金额" prop="totalAmount"></el-table-column>
@@ -79,6 +80,9 @@
                 </el-form-item>
                 <el-form-item label="订单标题" prop="subject">
                     <el-input v-model="editOrderForm.subject"></el-input>
+                </el-form-item>
+                <el-form-item label="收货地址" prop="address">
+                    <el-input v-model="editOrderForm.address"></el-input>
                 </el-form-item>
                 <el-form-item label="数量" prop="quantity">
                     <el-input v-model="editOrderForm.quantity" disabled></el-input>
