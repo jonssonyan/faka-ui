@@ -110,7 +110,7 @@
                         range-separator="至"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期"
-                        :picker-options="pickerOptions" format="yyyy-MM-dd">
+                        :picker-options="pickerOptions" format="yyyy-MM-dd" value-format="timestamp">
                 </el-date-picker>
             </div>
             <span slot="footer" class="dialog-footer">

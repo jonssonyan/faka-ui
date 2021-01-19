@@ -121,8 +121,7 @@
                 });
             },
             async downloadExportFile(file) {
-                let {data: res} = await this.$http.post(`/api/exportFile/downloadExportFile`, file);
-                if (res.code !== 1) return this.$message.error(res.msg);
+                await this.$http.post(`/api/exportFile/downloadExportFile`, file);
             }
         }
     }
