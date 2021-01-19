@@ -12,7 +12,7 @@ import RightsList from '../components/power/RightsList.vue'
 import RoleList from '../components/power/RoleList.vue'
 import Register from "../components/Register";
 import axios from "axios";
-import ExportFile from "../components/user/ExportFile";
+import ExportFile from "../components/file/ExportFile";
 
 Vue.use(VueRouter);
 

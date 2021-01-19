@@ -34,8 +34,8 @@
                     <template slot-scope="scope">
                         <!--下载-->
                         <el-tooltip effect="dark" content="下载" placement="top" :enterable="false"
-                                    v-if="scope.row.state===1">
-                            <el-button type="success" icon="el-icon-delete" size="mini"
+                                    v-if="scope.row.state===1 || scope.row.state===0">
+                            <el-button type="success" icon="el-icon-bottom" size="mini"
                                        @click="downloadExportFile(scope.row)"></el-button>
                         </el-tooltip>
                         <!--删除-->
