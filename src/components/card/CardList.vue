@@ -265,7 +265,7 @@
                     endTime: this.value2[1]
                 };
                 await this.$http.post(`/api/exportFile/generateExportFile`, exportFile);
-                this.$message.info("到处任务已提交，请前往我的导出查看");
+                this.$message.success("到处任务已提交，请前往我的导出查看");
                 this.exportDialogVisible = false;
             }
         }
