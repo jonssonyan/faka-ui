@@ -4,8 +4,11 @@
         <el-header>
             <div>
                 <img src="../assets/logo.png" alt="">
-                <span>后台管理</span>
+                <span>以梦商户后台管理面板</span>
             </div>
+            <el-badge :value="3" class="item">
+                <el-button size="small">未处理订单</el-button>
+            </el-badge>
             <el-button type="info" @click="logout">退出</el-button>
         </el-header>
         <!--主题区域-->

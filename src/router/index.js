@@ -13,6 +13,7 @@ import RoleList from '../components/power/RoleList.vue'
 import Register from "../components/Register";
 import axios from "axios";
 import ExportFile from "../components/file/ExportFile";
+import Panel from "../components/panel/Panel";
 
 Vue.use(VueRouter);
 
@@ -33,6 +34,10 @@ const routes = [
         path: '/home',
         component: Home,
         children: [
+            {
+                path: '/panel',
+                component: Panel
+            },
             {
                 path: '/exportFile',
                 component: ExportFile
