@@ -1,19 +1,19 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Login from '../components/Login.vue'
-import Home from '../components/Home.vue'
-import UserList from '../components/user/UserList.vue'
-import CategoryList from '../components/category/CategoryList.vue'
-import ProductList from '../components/product/ProductList.vue'
-import CardList from '../components/card/CardList.vue'
-import OrderList from '../components/order/OrderList.vue'
-import Alipay from '../components/config/Alipay.vue'
-import RightsList from '../components/power/RightsList.vue'
-import RoleList from '../components/power/RoleList.vue'
-import Register from "../components/Register";
+import Login from '../views/Login.vue'
+import Home from '../views/Home.vue'
+import UserList from '../views/user/UserList.vue'
+import CategoryList from '../views/category/CategoryList.vue'
+import ProductList from '../views/product/ProductList.vue'
+import CardList from '../views/card/CardList.vue'
+import OrderList from '../views/order/OrderList.vue'
+import Alipay from '../views/config/Alipay.vue'
+import RightsList from '../views/power/RightsList.vue'
+import RoleList from '../views/power/RoleList.vue'
+import Register from "../views/Register";
 import axios from "axios";
-import ExportFile from "../components/file/ExportFile";
-import Panel from "../components/panel/Panel";
+import ExportFile from "../views/file/ExportFile";
+import Panel from "../views/panel/Panel";
 
 Vue.use(VueRouter);
 
