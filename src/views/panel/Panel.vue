@@ -25,17 +25,10 @@
         <el-row :gutter="1">
             <el-col :span="12">
                 <el-card shadow="hover">
-                    <div id="user" style="width: 100%; height:500px;"></div>
-                </el-card>
-            </el-col>
-            <el-col :span="12">
-                <el-card shadow="hover">
                     <div id="order" style="width: 100%; height:500px;"></div>
                 </el-card>
             </el-col>
-        </el-row>
-        <el-row :gutter="1">
-            <el-col :span="24">
+            <el-col :span="12">
                 <el-card shadow="hover">
                     <div id="price" style="width: 100%; height:500px;"></div>
                 </el-card>
@@ -48,39 +41,40 @@
     export default {
         name: "Main",
         data() {
-            return {}
+            return {
+                orderXAxis: [],
+                orderSeries: []
+            }
         },
-        created() {
+        beforeMount() {
+            this.orderCharts();
         },
         mounted() {
-            this.drawUser();
             this.drawOrder();
             this.drawPrice();
         },
         methods: {
-            drawUser() {
-                // 基于准备好的dom，初始化echarts实例
-                const myChart = this.$echarts.init(document.getElementById('user'));
-                // 绘制图表
-                myChart.setOption({
-                    title: {
-                        text: '用户统计'
-                    },
-                    xAxis: {
-                        type: 'category',
-                        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-                    },
-                    yAxis: {
-                        type: 'value'
-                    },
-                    series: [{
-                        data: [820, 932, 901, 934, 1290, 1330, 1320],
-                        type: 'line',
-                        smooth: true
-                    }]
-                });
+            async orderCharts() {
+                let _orderXAxis = [];
+                let _orderSeries = [];
+                let {data: res} = await this.$http.post(`/api/order/orderCharts`, {});
+                if (res.code !== 1) {
+                    this.$message.error(res.msg)
+                } else {
+                    let map = res.data;
+                    Object.keys(map).forEach(function (key) {
+                        _orderXAxis.push(key);
+                        _orderSeries.push(map[key]);
+                    });
+                }
+                this.orderXAxis = _orderXAxis;
+                this.orderSeries = _orderSeries;
+                console.log(this.orderXAxis);
+                console.log(this.orderSeries);
             },
             drawOrder() {
+                console.log(this.orderXAxis);
+                console.log(this.orderSeries);
                 // 基于准备好的dom，初始化echarts实例
                 const myChart = this.$echarts.init(document.getElementById('order'));
                 // 绘制图表
@@ -91,13 +85,13 @@
                     xAxis: {
                         type: 'category',
                         boundaryGap: false,
-                        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                        data: this.orderXAxis
                     },
                     yAxis: {
                         type: 'value'
                     },
                     series: [{
-                        data: [820, 932, 901, 934, 1290, 1330, 1320],
+                        data: this.orderSeries,
                         type: 'line',
                         areaStyle: {}
                     }]
@@ -140,10 +134,10 @@
                     ],
                     series: [
                         {
-                            name: '直接访问',
+                            name: '收入(元)',
                             type: 'bar',
                             barWidth: '60%',
-                            data: [10, 52, 200, 334, 390, 330, 220]
+                            data: [10, 52, 200, 334, 390, 330, 1000]
                         }
                     ]
                 });
