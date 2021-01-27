@@ -42,16 +42,16 @@
                 </el-menu>
             </el-aside>
             <el-container>
+                <!--头部区域-->
+                <el-header class="container-header">
+                    <div class="toggle-button" @click="toggleCollapse">|||</div>
+                    <el-badge :value="3" class="item">
+                        <el-button size="small">未处理订单</el-button>
+                    </el-badge>
+                    <el-button type="info" @click="logout">退出</el-button>
+                </el-header>
                 <!--右侧主题内容-->
-                <el-main>
-                    <!--头部区域-->
-                    <el-header>
-                        <div class="toggle-button" @click="toggleCollapse">|||</div>
-                        <el-badge :value="3" class="item">
-                            <el-button size="small">未处理订单</el-button>
-                        </el-badge>
-                        <el-button type="info" @click="logout">退出</el-button>
-                    </el-header>
+                <el-main class="container-main">
                     <router-view></router-view>
                 </el-main>
             </el-container>
