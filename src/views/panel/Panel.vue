@@ -1,34 +1,34 @@
 <template>
-    <div>
-        <el-row :gutter="1">
-            <el-col :span="6">
+    <div class="app">
+        <el-row class="head">
+            <el-col class="head-col">
                 <el-card shadow="hover">
                     用户总数
                 </el-card>
             </el-col>
-            <el-col :span="6">
+            <el-col class="head-col">
                 <el-card shadow="hover">
                     订单总数
                 </el-card>
             </el-col>
-            <el-col :span="6">
+            <el-col class="head-col">
                 <el-card shadow="hover">
                     商品总数
                 </el-card>
             </el-col>
-            <el-col :span="6">
+            <el-col class="head-col">
                 <el-card shadow="hover">
                     今日交易额
                 </el-card>
             </el-col>
         </el-row>
-        <el-row :gutter="1">
-            <el-col :span="12">
+        <el-row class="echars">
+            <el-col class="echars-col">
                 <el-card shadow="hover">
                     <div id="order" style="width: 100%; height:500px;"></div>
                 </el-card>
             </el-col>
-            <el-col :span="12">
+            <el-col class="echars-col">
                 <el-card shadow="hover">
                     <div id="price" style="width: 100%; height:500px;"></div>
                 </el-card>
@@ -45,7 +45,7 @@
                 orderXAxis: [],
                 orderSeries: [],
                 priceXAxis: [],
-                priceSeries: [],
+                priceSeries: []
             }
         },
         mounted() {
@@ -148,7 +148,39 @@
 </script>
 
 <style scoped lang="less">
-    div .el-card {
-        margin: 5px;
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    .app {
+        display: flex;
+        flex-flow: column wrap;
+        padding: 10px;
+    }
+
+    .app .head {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .app .head .head-col {
+        width: 300px;
+        margin: 10px;
+    }
+
+    .app .echars {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 5px;
+    }
+
+    .app .echars .echars-col {
+        width: 600px;
+        margin: 10px;
     }
 </style>
