@@ -168,7 +168,6 @@
 
     .app .head .head-col {
         width: 300px;
-        margin: 10px;
     }
 
     .app .echars {
@@ -176,11 +175,10 @@
         flex-flow: row wrap;
         justify-content: space-between;
         align-items: center;
-        margin-top: 5px;
+        margin-top: 10px;
     }
 
     .app .echars .echars-col {
         width: 600px;
-        margin: 10px;
     }
 </style>

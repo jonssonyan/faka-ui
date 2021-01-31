@@ -70,7 +70,7 @@
                     </el-submenu>
                 </el-menu>
             </div>
-            <div class="main container-main">
+            <div class="main">
                 <router-view></router-view>
             </div>
         </div>
