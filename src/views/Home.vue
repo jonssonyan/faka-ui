@@ -196,7 +196,7 @@
     }
 
     .home .main {
-        flex: 1;
+        margin: 10px;
     }
 
     .el-menu-vertical-demo:not(.el-menu--collapse) {
